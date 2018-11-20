@@ -81,13 +81,13 @@ router.post("/putData", (req, res) => {
   });
 });
 
-app.use(express.static(path.join(__dirname, "client", "build")))
+app.use(express.static(path.join(__dirname, "../client", "build")))
 
 // append /api for our http requests
 app.use("/api", router);
 
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "client", "build", "index.html"));
+    res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
 });
 
 
