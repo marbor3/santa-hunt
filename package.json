@@ -1,0 +1,27 @@
+{
+  "name": "santa-hunt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "webpack.config.js",
+  "scripts": {
+    "start": "concurrently \"cd server && node server.js\" \"cd client && npm start\"",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marbor3/santa-hunt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "11.2.0"
+  },
+  "bugs": {
+    "url": "https://github.com/marbor3/santa-hunt/issues"
+  },
+  "homepage": "https://github.com/marbor3/santa-hunt#readme",
+  "dependencies": {
+    "concurrently": "^4.1.0"
+  }
+}
