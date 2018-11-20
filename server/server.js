@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
+const path = require("path")
 require("dotenv").config();
 const Data = require("./data");
 
@@ -80,8 +81,15 @@ router.post("/putData", (req, res) => {
   });
 });
 
+app.use(express.static(path.join(__dirname, "../client", "../build")))
+
 // append /api for our http requests
 app.use("/api", router);
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client", "../build", "index.html"));
+});
+
 
 // launch our backend into a port
 app.listen(process.env.PORT, () => console.log(`LISTENING ON PORT ${process.env.PORT}`));
