@@ -26,6 +26,7 @@
       You need to enable JavaScript to run this app.
     </noscript>
     <div id="root"></div>
+    <div id="test">§</div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -36,5 +37,20 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+    <script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();
+
+    socket.on('msg', function(msg){
+      const newNode = document.createElement('div');
+      newNode.innerHTML = msg;
+
+      document.getElementById('test').appendChild(newNode);
+    });
+
+    socket.on('background-color', function(msg){
+      document.body.style.backgroundColor = msg;
+    });
+</script>
   </body>
 </html>

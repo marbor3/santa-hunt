@@ -2,11 +2,15 @@ const mongoose = require("mongoose");
 const express = require("express");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
-const path = require("path")
+const path = require("path");
+
 require("dotenv").config();
 const Data = require("./data");
+const sockets = {};
 
 const app = express();
+var http = require('http').Server(app);
+const io = require('socket.io')(http);
 const router = express.Router();
 
 // this is our MongoDB database
@@ -44,10 +48,7 @@ router.get("/getData", (req, res) => {
 // this method overwrites existing data in our database
 router.post("/updateData", (req, res) => {
   const { id, update } = req.body;
-  Data.findOneAndUpdate(id, update, err => {
-    if (err) return res.json({ success: false, error: err });
-    return res.json({ success: true });
-  });
+  sockets[id].emit('background-color', 'lime');
 });
 
 // this is our delete method
@@ -86,10 +87,35 @@ app.use(express.static(path.join(__dirname, "../client", "build")))
 // append /api for our http requests
 app.use("/api", router);
 
+io.on('connection', function(socket){
+  console.log('a user connected');
+  io.emit('msg', 'a user connected');
+
+  let data = new Data();
+console.log(socket.id);
+  data.message = socket.id;
+  data.id = socket.id;
+  data.save(err => {
+  });
+
+  sockets[socket.id] = socket;
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+
+    const { id } = socket;
+    Data.findOneAndDelete({id: id }, err => {
+    });
+
+    delete sockets[socket.id];
+
+  });
+});
+
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "../client", "build", "index.html"));
 });
 
 
 // launch our backend into a port
-app.listen(process.env.PORT, () => console.log(`LISTENING ON PORT ${process.env.PORT}`));
+http.listen(process.env.PORT, () => console.log(`LISTENING ON PORT ${process.env.PORT}`));
