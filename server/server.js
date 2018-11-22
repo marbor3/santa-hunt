@@ -92,7 +92,7 @@ io.on('connection', function(socket){
   io.emit('msg', 'a user connected');
 
   let data = new Data();
-console.log(socket.id);
+
   data.message = socket.id;
   data.id = socket.id;
   data.save(err => {
