@@ -3,11 +3,17 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import ProfessionChooser from './ProfessionChooser';
 import Santa from './Santa';
-import Gift from './Gift';
 import Tree from './Tree';
 import {
   PROFESSION, SANTA, GIFT, TREE,
 } from './profession';
+
+const BASE_IMG = '../media/icon/045-tree-1.svg';
+const GIFT_SOLVED_IMG = '../media/icon/003-tree.svg';
+const TREE_SOLVED_IMG = '../media/icon/004-pine.svg';
+
+const SOLVED_MSG = 'Hurray!';
+const FAILED_MSG = 'WRONG!';
 
 class App extends Component {
   constructor() {
@@ -16,14 +22,18 @@ class App extends Component {
     this.state = {
       profession: null,
       isCorrect: false,
+      mystery: null,
     };
 
+    this.socket = null;
     this.selectProfession = profession => this.selectProfessionAction.bind(this, profession);
     this.checkAnswers = this.checkAnswers.bind(this);
+    this.reset = this.reset.bind(this);
   }
 
   componentWillMount() {
-    const profession = localStorage.getItem(PROFESSION) || null;
+    const storedProfession = localStorage.getItem(PROFESSION) || '{"profession":null}';
+    const { profession } = JSON.parse(storedProfession);
 
     this.setState({
       profession,
@@ -31,92 +41,98 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.getDataFromDb();
+    const { profession } = this.state;
+    this.socket = io();
 
-    var socket = io();
-
-    socket.on('msg', function (msg) {
-      const newNode = document.createElement('div');
-      newNode.innerHTML = msg;
+    this.socket.on('MYSTERY_SOLVED', () => {
+      this.setState({
+        mystery: 'SOLVED',
+      });
     });
 
-    socket.on('background-color', function (msg) {
-      document.body.style.backgroundColor = msg;
-    });
+    this.setProfession(profession);
   }
 
-  getDataFromDb() {
-    fetch("/api/getData")
-      .then(data => data.json())
-      .then(res => this.setState({ data: res.data }));
-  }
+  componentWillUpdate(nextProps, nextState) {
+    const { profession } = this.state;
 
-  putDataToDB(message) {
-    let currentIds = this.state.data.map(data => data.id);
-    let idToBeAdded = 0;
-    while (currentIds.includes(idToBeAdded)) {
-      ++idToBeAdded;
+    if (profession !== nextState.profession) {
+      this.setProfession(profession);
     }
+  }
 
-    axios.post("/api/putData", {
-      id: idToBeAdded,
-      message: message
-    });
-  };
-
-  deleteFromDB(idTodelete) {
-    let objIdToDelete = null;
-    this.state.data.forEach(dat => {
-      if (dat.id === idTodelete) {
-        objIdToDelete = dat._id;
-      }
-    });
-
-    axios.delete("/api/deleteData", {
-      data: {
-        id: objIdToDelete
-      }
-    });
-  };
-
-  updateDB(idToUpdate, updateToApply) {
-    axios.post("/api/updateData", {
-      id: idToUpdate,
-      update: { message: updateToApply }
-    });
-  };
+  setProfession(profession) {
+    if (this.socket) {
+      this.socket.emit('profession', profession);
+    }
+  }
 
   selectProfessionAction(profession) {
     this.setState({
       profession,
     });
 
-    localStorage.setItem(PROFESSION, profession);
+    const storedProfession = {
+      profession,
+    };
+
+    localStorage.setItem(PROFESSION, JSON.stringify(storedProfession));
   }
 
   checkAnswers(answers) {
-    let isCorrect = true;
+    axios.post('/santa/verify', {
+      answers,
+    }).then((response) => {
+      const { isCorrect } = response.data;
+      const message = isCorrect ? SOLVED_MSG : FAILED_MSG;
 
-    if (answers.answerOne !== 1) {
-      isCorrect = false;
-    }
-
-    if (answers.answerTwo !== 2) {
-      isCorrect = false;
-    }
-
-    this.setState({
-      isCorrect,
+      this.setState({
+        isCorrect,
+        message,
+      });
     });
   }
 
+  reset() {
+    this.setState({
+      isCorrect: null,
+      message: null,
+    });
+  }
+
+  isSolved() {
+    const { mystery } = this.state;
+
+    return mystery === 'SOLVED';
+  }
+
   render() {
-    const { profession, isCorrect } = this.state;
+    const {
+      profession, isCorrect, mystery, message,
+    } = this.state;
 
     switch (profession) {
-      case SANTA: { return <Santa checkAnswers={this.checkAnswers} isCorrect={isCorrect} />; }
-      case GIFT: { return <Gift />; }
-      case TREE: { return <Tree />; }
+      case SANTA: {
+        return (
+          <Santa
+            checkAnswers={this.checkAnswers}
+            reset={this.reset}
+            isCorrect={isCorrect}
+            mystery={mystery}
+            message={message}
+          />
+        );
+      }
+      case GIFT: {
+        const image = this.isSolved() ? GIFT_SOLVED_IMG : BASE_IMG;
+
+        return <Tree image={image} />;
+      }
+      case TREE: {
+        const image = this.isSolved() ? TREE_SOLVED_IMG : BASE_IMG;
+
+        return <Tree image={image} />;
+      }
 
       default: {
         return <ProfessionChooser selectProfession={this.selectProfession} />;
