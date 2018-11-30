@@ -9,11 +9,11 @@ import {
 } from './profession';
 
 const BASE_IMG = '../media/icon/045-tree-1.svg';
-const GIFT_SOLVED_IMG = '../media/icon/003-tree.svg';
-const TREE_SOLVED_IMG = '../media/icon/004-pine.svg';
+const GIFT_SOLVED_IMG = '../media/icon/reindeer-gift.svg';
+const TREE_SOLVED_IMG = '../media/icon/reindeer-tree.svg';
 
-const SOLVED_MSG = 'Hurray!';
-const FAILED_MSG = 'WRONG!';
+const SOLVED_MSG = 'Brawo, udało się Wam! Szukajcie teraz wśród reniferów tego z czerwonym nosem!';
+const FAILED_MSG = 'Niestety, pomyliliście się!';
 
 class App extends Component {
   constructor() {

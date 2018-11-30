@@ -38,23 +38,23 @@ router.post('/verify', (req, res) => {
   let isCorrect = true;
   const { answers } = req.body;
 
-  if (answers.answerOne !== 1) {
+  if (answers.answerOne !== 17) {
     isCorrect = false;
   }
 
-  if (answers.answerTwo !== 2) {
+  if (answers.answerTwo !== 324) {
     isCorrect = false;
   }
 
-  if (answers.answerThree !== 3) {
+  if (answers.answerThree !== 56) {
     isCorrect = false;
   }
 
-  if (answers.answerFour !== 4) {
+  if (answers.answerFour !== 100) {
     isCorrect = false;
   }
 
-  if (answers.answerFive !== 5) {
+  if (answers.answerFive !== 257) {
     isCorrect = false;
   }
 

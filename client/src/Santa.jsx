@@ -10,7 +10,7 @@ const Santa = styled.div`
 
 const Icon = styled.img`
   max-width: 50vw;
-  width: 100%:
+  width: 100%;
 `;
 
 const Answers = styled.div`
@@ -30,6 +30,7 @@ const AnswerInput = styled.input`
   padding: 10px 20px;
   background-color: ${props => props.inputBgColor || '#ffffff'};
   color: ${props => props.inputColor || '#ffffff'};
+  text-align: center;
 `;
 
 const Button = styled.button`
@@ -40,6 +41,7 @@ const Button = styled.button`
   padding: 10px 20px;
   border-radius: 30px;
   margin-top: 30px;
+  max-width: 300px;
 `;
 
 const Messages = styled.div`
@@ -50,6 +52,9 @@ const Messages = styled.div`
 
 const Message = styled.div`
   padding: 10px;
+  font-size: 80px;
+  color: #00AEEF;
+  text-align: center;
 `;
 
 const SantaProfession = (props) => {
@@ -84,19 +89,19 @@ const SantaProfession = (props) => {
       {!message && (
         <Answers>
           <Answer>
-            <AnswerInput type="text" ref={answerOne} inputBgColor="#50514F" />
+            <AnswerInput type="text" ref={answerOne} inputBgColor="#079F49" />
           </Answer>
           <Answer>
-            <AnswerInput type="text" ref={answerTwo} inputBgColor="#F25F5C" />
+            <AnswerInput type="text" ref={answerTwo} inputBgColor="#ED1C24" />
           </Answer>
           <Answer>
-            <AnswerInput type="text" ref={answerThree} inputColor="#247BA0" inputBgColor="#FFE066" />
+            <AnswerInput type="text" ref={answerThree} inputColor="#247BA0" inputBgColor="#FBB040" />
           </Answer>
           <Answer>
-            <AnswerInput type="text" ref={answerFour} inputBgColor="#247BA0" />
+            <AnswerInput type="text" ref={answerFour} inputColor="#FBB040" inputBgColor="#00AEEF" />
           </Answer>
           <Answer>
-            <AnswerInput type="text" ref={answerFive} inputBgColor="#70C1B3" />
+            <AnswerInput type="text" ref={answerFive} inputBgColor="#92278F" />
           </Answer>
           <Button type="button" onClick={sendAnswers}>Sprawdź!</Button>
         </Answers>
