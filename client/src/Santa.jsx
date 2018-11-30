@@ -86,6 +86,7 @@ const SantaProfession = (props) => {
           <Button type="button" onClick={reset}>Reset</Button>
         </Messages>
       )}
+
       {!message && (
         <Answers>
           <Answer>
